@@ -143,33 +143,3 @@ function getcyclessample(intr,slf,ninit)
     return attrlist,basinlist,cyclelengthlist
 end
     
-
-
-
-function getcyclessample_backup(intr,slf,ninit)
-    
-    n = length(slf)
-    nm1 = n-1
-    attrlist = zeros(Int64,n)           # s=0 is always an attractor
-    keyzeros = join(zeros(Int64,n))
-    attdict = [keyzeros=>0]    # values are the basin sizes
-    for (i=1:ninit)       # calculate basins using ninit initial states
-        s = rand(0:1,n)
-        skey = join(s)
-        pathdict = Dict()
-        while (!haskey(attdict,skey) && !haskey(pathdict,skey))
-            pathdict[skey] = "-"
-            s = upd(s,intr,slf,n)
-            skey=join(s)         # join(s) == bits(i)[end-nm1:end]
-        end
-        if (haskey(attdict,skey)) attdict[skey] += 1 
-        else                        # this is a new cycle of fp
-            attdict[skey] = 1
-            attrlist = [attrlist s]
-        end
-    end
-    basinlist = [attdict[join(attrlist[:,i])]/ninit for i in 1:length(attrlist[1,:])]
-    return attrlist,basinlist
-end
-
-
